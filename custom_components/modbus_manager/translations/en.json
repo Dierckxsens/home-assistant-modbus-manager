@@ -1,0 +1,5 @@
+{
+  "title": "Modbus Manager",
+  "config": {"step": {"user": {"title": "Add Modbus device", "description": "Choose the connection type."}, "network": {"title": "Network connection", "description": "Configure the Modbus TCP device and unit ID."}, "serial": {"title": "Serial connection", "description": "Configure the serial bus and unit ID."}}},
+  "options": {"step": {"init": {"title": "Manage Modbus entities"}, "add_entity": {"title": "Add entity", "description": "Choose the Home Assistant entity type."}, "entity": {"title": "Register settings", "description": "Configure the Modbus address, data type and scaling."}, "remove_entity": {"title": "Remove entity"}}, "abort": {"no_entities": "There are no configured entities to remove."}}
+}
