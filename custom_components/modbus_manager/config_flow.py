@@ -73,7 +73,9 @@ class ModbusManagerConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
 class ModbusManagerOptionsFlow(config_entries.OptionsFlow):
     def __init__(self, config_entry):
-        self.config_entry = config_entry
+        # Home Assistant provides self.config_entry to OptionsFlow instances.
+        # Do not assign to self.config_entry here; it is a managed property.
+        self._options = dict(config_entry.options)
         self._platform = None
 
     async def async_step_init(self, user_input=None):
@@ -91,9 +93,10 @@ class ModbusManagerOptionsFlow(config_entries.OptionsFlow):
     async def async_step_entity(self, user_input=None):
         if user_input is not None:
             definition = {"id": uuid.uuid4().hex, "platform": self._platform, **user_input}
-            entities = list(self.config_entry.options.get(CONF_ENTITIES, []))
+            entities = list(self._options.get(CONF_ENTITIES, []))
             entities.append(definition)
-            return self.async_create_entry(title="", data={CONF_ENTITIES: entities})
+            self._options[CONF_ENTITIES] = entities
+            return self.async_create_entry(title="", data=self._options)
 
         schema = {
             vol.Required("name"): str,
@@ -118,13 +121,14 @@ class ModbusManagerOptionsFlow(config_entries.OptionsFlow):
         return self.async_show_form(step_id="entity", data_schema=vol.Schema(schema))
 
     async def async_step_remove_entity(self, user_input=None):
-        entities = list(self.config_entry.options.get(CONF_ENTITIES, []))
+        entities = list(self._options.get(CONF_ENTITIES, []))
         if not entities:
             return self.async_abort(reason="no_entities")
         choices = {e["id"]: f"{e['name']} ({e['platform']}, {e['address']})" for e in entities}
         if user_input is not None:
             entities = [e for e in entities if e["id"] != user_input["entity_id"]]
-            return self.async_create_entry(title="", data={CONF_ENTITIES: entities})
+            self._options[CONF_ENTITIES] = entities
+            return self.async_create_entry(title="", data=self._options)
         return self.async_show_form(
             step_id="remove_entity",
             data_schema=vol.Schema({vol.Required("entity_id"): vol.In(choices)}),
