@@ -6,6 +6,7 @@ from modbus_connection import ModbusSerialParams, ModbusTcpParams
 
 from homeassistant.components.modbus import async_get_unit
 from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
 
 from .const import (
@@ -16,10 +17,11 @@ from .const import (
     CONF_PARITY,
     CONF_STOPBITS,
     CONF_UNIT_ID,
-    PLATFORMS,
     TYPE_RTU_TCP,
     TYPE_SERIAL,
 )
+
+PLATFORMS = [Platform.SENSOR, Platform.BINARY_SENSOR, Platform.NUMBER, Platform.SWITCH]
 
 
 def _params(data):
